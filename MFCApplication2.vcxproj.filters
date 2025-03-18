@@ -54,6 +54,9 @@
     <ClInclude Include="app\level_adjust.h">
       <Filter>源文件\app</Filter>
     </ClInclude>
+    <ClInclude Include="app\horizontal_adjust.h">
+      <Filter>源文件\app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication2.cpp">
@@ -75,6 +78,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="app\level_adjust.cpp">
+      <Filter>源文件\app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\horizontal_adjust.cpp">
       <Filter>源文件\app</Filter>
     </ClCompile>
   </ItemGroup>

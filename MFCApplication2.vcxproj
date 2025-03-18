@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="..\DataStructure\practice4_Graph\mylib\graph.hpp" />
     <ClInclude Include="app\basic_func.h" />
+    <ClInclude Include="app\horizontal_adjust.h" />
     <ClInclude Include="app\level_adjust.h" />
     <ClInclude Include="app\matrix.hpp" />
     <ClInclude Include="AttachedLevel.h" />
@@ -200,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="app\basic_func.cpp" />
+    <ClCompile Include="app\horizontal_adjust.cpp" />
     <ClCompile Include="app\level_adjust.cpp" />
     <ClCompile Include="AttachedLevel.cpp" />
     <ClCompile Include="MFCApplication2.cpp" />
