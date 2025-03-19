@@ -5,8 +5,16 @@
 const double M_PI = 3.14159265358979323846;
 
 double deg2rad(int deg, int min, int sec) {
-	return (deg + min / 60 + sec / 3600) * M_PI / 180;
+	return (deg + double(min) / 60 + double(sec) / 3600) * M_PI / 180;
 }
+
+double deg2rad(double deg) {
+	int deg = int(deg);
+	int min = int((deg - int(deg)) * 100);
+	int sec = int((deg - int(deg) - min * 0.01) * 10000);
+	return (deg + double(min) / 60 + double(sec) / 3600) * M_PI / 180;
+}
+
 double rad2deg(double rad) {
 	double deg = rad * 180 / M_PI;
 	double min = (deg - int(deg)) * 60;

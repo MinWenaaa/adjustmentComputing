@@ -65,8 +65,9 @@ public:
 private:
 	horiPoint* findPoint(const char* name);
 	angleStation* findStation(const horiPoint* begin);
-	void approxiCoordTrilateration();
-	void approxiCoordTriangulation();
+	double getAzimuth(const horiPoint* begin, const horiPoint* end);
+	void approxiTriangulateration();
+	void approxiCoordTriangulation(bool* visited);
 	void getInitialAzimuth();
 
 	int PointNum, KnownPointNum, angleStationNum, angleNum_All, lengthNum, azimuthNum;

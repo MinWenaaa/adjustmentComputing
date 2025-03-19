@@ -79,6 +79,7 @@ horiPoint* horiControlNet::findPoint(const char* name) {
 	}
 	return nullptr;
 }
+
 angleStation* horiControlNet::findStation(const horiPoint* begin) {
 	for (int i = 0; i < angleStationNum; ++i) {
 		if (angleStations[i].pBegin == begin)
@@ -87,19 +88,114 @@ angleStation* horiControlNet::findStation(const horiPoint* begin) {
 	return nullptr;
 }
 
+double horiControlNet::getAzimuth(const horiPoint* begin, const horiPoint* end) {
+	angleStation* station = nullptr;
+	station = findStation(begin);
+	double result;
+	if (station) {
+		for (int i = 0; i < station->valueNum; i++) {
+			if (station->values[i].end != end) continue;
+			result = sumDeg(station->values[i].surveyVal, station->first_azimuth);
+			if (result > 360) result -= 360;
+			return result;
+		}
+	}
+	return -1;
+}
+
+bool horiControlNet::forwardIntersection(const horiPoint* known1, const horiPoint* known2, horiPoint* unknown) {
+	double angle1 = deg2rad(abs(subDeg(getAzimuth(known1, unknown), getAzimuth(known1, known2))));
+	double angle2 = deg2rad(abs(subDeg(getAzimuth(known2, unknown), getAzimuth(known2, known1))));
+	double angle12 = deg2rad(abs(subDeg(getAzimuth(unknown, known1), getAzimuth(unknown, known2))));
+	double length12 = sqrt((known1->X - known2->X) * (known1->X - known2->X) + (known1->Y - known2->Y) * (known1->Y - known2->Y));
+	double length1 = length12 * sin(angle2) / sin(angle12);
+	double length2 = length12 * sin(angle1) / sin(angle12);
+	double azimuth1 = deg2rad(getAzimuth(known1, unknown)), azimuth2 = deg2rad(getAzimuth(known2, unknown));
+	unknown->X = (known1->X + length1 * cos(azimuth1) + known2->X + length2 * cos(azimuth2)) / 2;
+	unknown->Y = (known1->Y + length1 * sin(azimuth1) + known2->Y + length2 * sin(azimuth2)) / 2;
+}
+
 void horiControlNet::solve() {
+	getInitialAzimuth();
 	if (lengthNum) {	// 边角网
-		approxiCoordTrilateration();
+		approxiCoordTriangulateration();
 	} else {	// 测角网
-		approxiCoordTriangulation();
+		bool* visited = new bool[PointNum];
+		for (int i = 0; i < PointNum; i++)
+			visited[i] = i < KnownPointNum;
+		approxiCoordTriangulation(visited);
 	}
 }
 
-void horiControlNet::approxiCoordTrilateration() {
-	getInitialAzimuth();
+void horiControlNet::approxiCoordTriangulateration() {
+	bool* visited = new bool[PointNum];
+	for (int i = 0; i < PointNum; i++)
+		visited[i] = i < KnownPointNum;
+	
+	horiPoint *begin = nullptr, *target = nullptr;	// 处理边长观测值
+	for (int i = 0; i < lengthNum; i++) {
+		if (visited[lengthData[i].pBegin - pointData] ^ visited[lengthData[i].pEnd - pointData]) {	// 边长观测有一个顶点标记过
+			begin = visited[lengthData[i].pBegin - pointData] ? lengthData[i].pBegin : lengthData[i].pEnd;
+			target = visited[lengthData[i].pBegin - pointData] ? lengthData[i].pEnd : lengthData[i].pBegin;
+		} else continue;
+		double azimuth = getAzimuth(begin, target);
+		target->X = begin->X + lengthData[i].length * cos(deg2rad(azimuth));
+		target->Y = begin->Y + lengthData[i].length * sin(deg2rad(azimuth));
+		visited[target - pointData] = true;
+	}
+	
+	bool flag = false;
+	for (int i = 0; i < PointNum; i++) {
+		if (!visited[i]) {
+			flag = true; break;
+		}		
+	}
+
+	if (flag) {
+		approxiCoordTriangulation(visited);
+	} else {
+		delete[] visited;
+		return;
+	}
+
+}
+
+void horiControlNet::approxiCoordTriangulation(bool* visited) {
+	horiPoint* unknown = nullptr, *known1 = nullptr, *known2 = nullptr;
+	angleStation* tempStation1 = nullptr;
+	bool flag = false;
+	while (true) {
+		flag = false;
+		for (int i = 0; i < PointNum; i++) {	// 一个未知站点
+			if (visited[i]) continue;
+			unknown = &pointData[i];
+			tempStation1 = findStation(unknown);
+			if (!tempStation1) continue;
+			for (int j = 0; j < tempStation1->valueNum; j++) {	// 该未知站点观测的两个已知点
+				if (!visited[tempStation1->values[j].end - pointData]) continue;
+				known1 = tempStation1->values[j].end;			// 第一个已知点
+				for (int k = 0; k < tempStation1->valueNum; k++) {
+					if (getAzimuth(known1, tempStation1->values[k].end) != -1) {
+						known2 = tempStation1->values[k].end;	// 第二个已知点
+						break;
+					}
+				}
+				if (known1 && known2) {
+					forwardIntersection(known1, known2, unknown);
+					visited[i] = true;
+					flag = true;
+					break;
+				}
+			}
+		}
+		if (!flag) break;	// 所有点都已知，结束
+	}
+	delete[] visited;
+	return;
 }
 
 void horiControlNet::getInitialAzimuth() {
+	// 获取整张网的各边方位角
 	bool* visited = new bool[angleStationNum];
 	angleStation* tempStation = nullptr;
 	horiPoint* begin = nullptr, * end = nullptr;

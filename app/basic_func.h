@@ -1,6 +1,7 @@
 #pragma once
 
 double deg2rad(int deg, int min, int sec);
+double deg2rad(double deg);
 double rad2deg(double rad);
 
 double azimuth(double delx, double dely);
