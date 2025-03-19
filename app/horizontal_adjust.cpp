@@ -208,6 +208,9 @@ void horiControlNet::approxiCoordTriangulation(bool* visited) {
 void horiControlNet::getInitialAzimuth() {
 	// 获取整张网的各边方位角
 	bool* visited = new bool[angleStationNum];
+	for (int i = 0; i < angleStationNum; i++) {
+		visited[i] = false;
+	}
 	angleStation* tempStation = nullptr;
 	horiPoint* begin = nullptr, * end = nullptr;
 	for (int i = 0; i < angleStationNum; i++) {	// 根据已知点计算方向角
@@ -225,23 +228,22 @@ void horiControlNet::getInitialAzimuth() {
 
 	AzimuthVal* tempAzimuth = nullptr;
 	horiPoint* target = nullptr;
+	angleStation* station = nullptr;
 	for (int i = 0; i < azimuthNum; i++) {	// 根据方向角观测值计算
 		tempAzimuth = &azimuthData[i];
-		for (int j = 0; j < angleStationNum; j++) {
-			if (visited[j]) continue;
-			tempStation = &angleStations[j];
-			if (tempStation->pBegin == tempAzimuth->pBegin) target = tempAzimuth->pEnd;
-			else if (tempStation->pBegin == tempAzimuth->pEnd) target = tempAzimuth->pBegin;
-			else continue;
-
-			for (int k = 0; k < tempStation->valueNum; k++) {
-				if (tempStation->values[k].end == target) {
-					tempStation->first_azimuth = subDeg(tempAzimuth->azimuth, tempStation->values[k].surveyVal);
-					visited[j] = true;
-					break;
-				}
-			}
+		station = findStation(tempAzimuth->pBegin);
+		if (!visited[station-angleStations]) { 
+			station->first_azimuth = tempAzimuth->azimuth; 
+			visited[station - angleStations] = true;
 		}
+		station = findStation(tempAzimuth->pEnd);
+		if (!visited[station - angleStations]) {
+			double value = sumDeg(tempAzimuth->azimuth, 180);
+			if (value > 360) value -= 360;
+			station->first_azimuth = value;
+			visited[station - angleStations] = true;
+		}
+
 	}
 
 	std::queue<angleStation*> stationQueue;		// 广度优先遍历整张网
@@ -256,7 +258,7 @@ void horiControlNet::getInitialAzimuth() {
 			nextStation = findStation(tempStation->values[i].end);
 			if (!nextStation) continue;		// 终点不是测站
 			if (visited[nextStation - angleStations]) continue;	// 已经标记过
-			for (int j = 0; j < nextStation->valueNum; i++) {	// 计算方向角并标记
+			for (int j = 0; j < nextStation->valueNum; j++) {	// 计算方向角并标记
 				if (nextStation->values[j].end != tempStation->pBegin) continue;
 				double temp = sumDeg(tempStation->first_azimuth, tempStation->values[i].surveyVal) + 180;
 				if (temp > 360) temp -= 360;
@@ -273,9 +275,18 @@ void horiControlNet::getInitialAzimuth() {
 
 std::string horiControlNet::toString() {
 	std::ostringstream os;
-	os << "PointNum: " << PointNum << "\n";
-	for (int i = 0; i < PointNum; i++) {
-		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
+	//os << "PointNum: " << PointNum << "\n";
+	//for (int i = 0; i < PointNum; i++) {
+	//	os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
+	//}
+
+	os << "stationNum: " << angleStationNum << "\n";
+	for (int i = 0; i < angleStationNum; i++) {
+		os << "name: " << angleStations[i].pBegin->Name << "  first angle: " << angleStations[i].first_azimuth << "\n";
+		for (int j = 0; j < angleStations[i].valueNum; j++) {
+			os << "end: " << angleStations[i].values[j].end->Name << "  survey: " << sumDeg(angleStations[i].first_azimuth, angleStations[i].values[j].surveyVal) << "\n";
+		}
+		os << "\n";
 	}
 	return os.str();
 }
