@@ -225,6 +225,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="app\水准网数据示例.txt" />
+    <Text Include="app\测角平面控制网.txt" />
+    <Text Include="app\边角平面控制网.txt" />
     <Text Include="app\附合水准观测数据.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

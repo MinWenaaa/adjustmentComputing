@@ -20,7 +20,7 @@ struct angleSurvey {
 };
 class angleStation {
 public:
-	angleStation() : pBegin(nullptr), values(nullptr) {}
+	angleStation() : pBegin(nullptr), values(nullptr), first_azimuth(0) {}
 	~angleStation() { delete[] values;}
 	bool setValueNum(int num) {
 		if (num <= 0) return false;
@@ -30,6 +30,7 @@ public:
 	}
 
 	int valueNum;
+	double first_azimuth;
 	horiPoint* pBegin;
 	angleSurvey* values;
 };
@@ -63,8 +64,12 @@ public:
 
 private:
 	horiPoint* findPoint(const char* name);
-	int PointNum, KnownPointNum, angleStationNum, angleNum_All, lengthNum, azimuthNum;
+	angleStation* findStation(const horiPoint* begin);
+	void approxiCoordTrilateration();
+	void approxiCoordTriangulation();
+	void getInitialAzimuth();
 
+	int PointNum, KnownPointNum, angleStationNum, angleNum_All, lengthNum, azimuthNum;
 	horiPoint* pointData;
 	angleStation* angleStations;
 	lengthSurveyVal* lengthData;

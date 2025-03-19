@@ -106,5 +106,11 @@
     <Text Include="app\水准网数据示例.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="app\边角平面控制网.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="app\测角平面控制网.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>
