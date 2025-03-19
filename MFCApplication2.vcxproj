@@ -192,6 +192,7 @@
     <ClInclude Include="app\matrix.hpp" />
     <ClInclude Include="AttachedLevel.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="horizontal_network.h" />
     <ClInclude Include="MFCApplication2.h" />
     <ClInclude Include="MFCApplication2Dlg.h" />
     <ClInclude Include="NetworkLevel.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="app\horizontal_adjust.cpp" />
     <ClCompile Include="app\level_adjust.cpp" />
     <ClCompile Include="AttachedLevel.cpp" />
+    <ClCompile Include="horizontal_network.cpp" />
     <ClCompile Include="MFCApplication2.cpp" />
     <ClCompile Include="MFCApplication2Dlg.cpp" />
     <ClCompile Include="NetworkLevel.cpp" />

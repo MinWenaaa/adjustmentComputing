@@ -8,10 +8,10 @@ double deg2rad(int deg, int min, int sec) {
 	return (deg + double(min) / 60 + double(sec) / 3600) * M_PI / 180;
 }
 
-double deg2rad(double deg) {
-	int deg = int(deg);
-	int min = int((deg - int(deg)) * 100);
-	int sec = int((deg - int(deg) - min * 0.01) * 10000);
+double deg2rad(double Deg) {
+	int deg = int(Deg);
+	int min = int((Deg - int(Deg)) * 100);
+	int sec = int((Deg - int(Deg) - min * 0.01) * 10000);
 	return (deg + double(min) / 60 + double(sec) / 3600) * M_PI / 180;
 }
 

@@ -6,6 +6,8 @@
 #include "AttachedLevel.h"
 #include "NetworkLevel.h"
 #include "level_adjust.h"
+#include "horizontal_network.h"
+#include "horizontal_adjust.h"
 
 
 // CMFCApplication2Dlg 对话框
@@ -39,11 +41,13 @@ public:
 	afx_msg void OnCbnSelchangeModSel();
 	int mode;
 	WenMin::levelAdjust la;
+	horiControlNet horiNet;
 
 	// Tab control
 	CTabCtrl visual_tab;
 	AttachedLevel* attaced_levelDlg;
 	NetworkLevel* network_levelDlg;
+	HorizontalNetWork* horizontal_netDlg;
 	CComboBox mode_sle;
 	afx_msg void OnBnClickedBtnSolve();
 };

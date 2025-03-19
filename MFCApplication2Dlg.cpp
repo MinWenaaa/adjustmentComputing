@@ -107,10 +107,13 @@ BOOL CMFCApplication2Dlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 	visual_tab.InsertItem(0, _T("附合水准"));
 	visual_tab.InsertItem(1, _T("水准网平差"));
+	visual_tab.InsertItem(2, _T("平面网平差"));
 	attaced_levelDlg = new AttachedLevel();
 	network_levelDlg = new NetworkLevel();
+	horizontal_netDlg = new HorizontalNetWork();
 	attaced_levelDlg->Create(IDD_ATTACHED_LEVEL, &visual_tab);
 	network_levelDlg->Create(IDD_NETWORK_LEVEL, &visual_tab);
+	horizontal_netDlg->Create(IDD_HORIZONTAL_ADJUST, &visual_tab);
 	CRect rect;
 	visual_tab.GetClientRect(&rect);
 	rect.top += 60; rect.bottom -= 20; rect.left += 15; rect.right -= 15;
@@ -118,6 +121,7 @@ BOOL CMFCApplication2Dlg::OnInitDialog()
 	network_levelDlg->MoveWindow(&rect);
 	attaced_levelDlg->ShowWindow(SW_SHOW);
 	network_levelDlg->ShowWindow(SW_HIDE);
+	horizontal_netDlg->ShowWindow(SW_HIDE);
 
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -189,7 +193,8 @@ void CMFCApplication2Dlg::OnBnClickedOpenFile()
 		strFilePath = fileDlg.GetPathName();
 		CT2CA pszConvertedAnsiString(strFilePath);
 		std::string strStd(pszConvertedAnsiString);
-		la.ReadData(strStd.c_str());
+		if(mode!=2)la.ReadData(strStd.c_str());
+		else horiNet.readData(strStd.c_str());
 	}
 }
 
@@ -204,11 +209,17 @@ void CMFCApplication2Dlg::OnCbnSelchangeModSel()
 	case 0:
 		attaced_levelDlg->ShowWindow(SW_SHOW);
 		network_levelDlg->ShowWindow(SW_HIDE);
+		horizontal_netDlg->ShowWindow(SW_HIDE);
 		break;
 	case 1:
 		attaced_levelDlg->ShowWindow(SW_HIDE);
 		network_levelDlg->ShowWindow(SW_SHOW);
+		horizontal_netDlg->ShowWindow(SW_HIDE);
 		break;
+	case 2:
+		attaced_levelDlg->ShowWindow(SW_HIDE);
+		network_levelDlg->ShowWindow(SW_HIDE);
+		horizontal_netDlg->ShowWindow(SW_SHOW);
 	}
 }
 
@@ -217,6 +228,7 @@ void CMFCApplication2Dlg::OnBnClickedBtnSolve()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CWnd* pStatic = nullptr;
+	std::string str2 = "";
 	switch (mode) {
 	case 0:
 		la.SolveAttachedLevel();
@@ -234,7 +246,6 @@ void CMFCApplication2Dlg::OnBnClickedBtnSolve()
 		}
 		break;
 	case 1:
-		std::string str2 = "";
 		la.SolveNetworkLevel(str2);
 		pStatic = network_levelDlg->GetDlgItem(IDC_NETWORK_LEVEL_STRING1);
 		if (pStatic != nullptr) {
@@ -251,6 +262,15 @@ void CMFCApplication2Dlg::OnBnClickedBtnSolve()
 		pStatic = network_levelDlg->GetDlgItem(IDC_NETWORK_LEVEL_STRING3);
 		if (pStatic != nullptr) {
 			CString cstrText(str2.c_str());
+			pStatic->SetWindowText(cstrText);
+		}
+		break;
+	case 2:
+		horiNet.solve();
+		pStatic = horizontal_netDlg->GetDlgItem(IDC_HORIZONTAL_COORD_STRING);
+		if (pStatic != nullptr) {
+			std::string str = horiNet.toString();
+			CString cstrText(str.c_str());
 			pStatic->SetWindowText(cstrText);
 		}
 		break;

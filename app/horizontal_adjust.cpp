@@ -1,9 +1,11 @@
+#include "pch.h"
 #include"horizontal_adjust.h"
 #include"basic_func.h"
 #include<fstream>
 #include<sstream>
 #include<iostream>
 #include<string>
+#include<iomanip>
 #include<queue>
 
 void horiControlNet::readData(const char* fileName) {
@@ -13,9 +15,8 @@ void horiControlNet::readData(const char* fileName) {
 		exit(1);
 	}
 
-	int surveyNum1, surveyNum2, num1, num2;
 	file >> PointNum >> KnownPointNum >> angleStationNum >> angleNum_All >> lengthNum >> azimuthNum;
-	int n1, n2, n3, n4;
+	double n1, n2, n3, n4;
 	file >> n1 >> n2 >> n3 >> n4;
 	
 	// 点数据读取
@@ -113,6 +114,7 @@ bool horiControlNet::forwardIntersection(const horiPoint* known1, const horiPoin
 	double azimuth1 = deg2rad(getAzimuth(known1, unknown)), azimuth2 = deg2rad(getAzimuth(known2, unknown));
 	unknown->X = (known1->X + length1 * cos(azimuth1) + known2->X + length2 * cos(azimuth2)) / 2;
 	unknown->Y = (known1->Y + length1 * sin(azimuth1) + known2->Y + length2 * sin(azimuth2)) / 2;
+	return true;
 }
 
 void horiControlNet::solve() {
@@ -129,19 +131,27 @@ void horiControlNet::solve() {
 
 void horiControlNet::approxiCoordTriangulateration() {
 	bool* visited = new bool[PointNum];
-	for (int i = 0; i < PointNum; i++)
+	std::queue<horiPoint*> pointQueue;
+	for (int i = 0; i < PointNum; i++){
 		visited[i] = i < KnownPointNum;
-	
-	horiPoint *begin = nullptr, *target = nullptr;	// 处理边长观测值
-	for (int i = 0; i < lengthNum; i++) {
-		if (visited[lengthData[i].pBegin - pointData] ^ visited[lengthData[i].pEnd - pointData]) {	// 边长观测有一个顶点标记过
-			begin = visited[lengthData[i].pBegin - pointData] ? lengthData[i].pBegin : lengthData[i].pEnd;
-			target = visited[lengthData[i].pBegin - pointData] ? lengthData[i].pEnd : lengthData[i].pBegin;
-		} else continue;
-		double azimuth = getAzimuth(begin, target);
-		target->X = begin->X + lengthData[i].length * cos(deg2rad(azimuth));
-		target->Y = begin->Y + lengthData[i].length * sin(deg2rad(azimuth));
-		visited[target - pointData] = true;
+		if (visited[i]) pointQueue.push(&pointData[i]);
+	}
+
+	horiPoint* begin = nullptr, * target = nullptr;	// 处理边长观测值
+	while (!pointQueue.empty()) {
+		begin = pointQueue.front();
+		pointQueue.pop();
+		for (int i = 0; i < lengthNum; i++) {
+			if (lengthData[i].pBegin == begin || lengthData[i].pEnd == begin) 
+				target = lengthData[i].pBegin == begin ? lengthData[i].pEnd : lengthData[i].pBegin;
+			else continue;
+			if (visited[target - pointData]) continue;
+			double azimuth = getAzimuth(begin, target);
+			target->X = begin->X + lengthData[i].length * cos(deg2rad(azimuth));
+			target->Y = begin->Y + lengthData[i].length * sin(deg2rad(azimuth));
+			visited[target - pointData] = true;
+			pointQueue.push(target);
+		}
 	}
 	
 	bool flag = false;
@@ -258,4 +268,13 @@ void horiControlNet::getInitialAzimuth() {
 
 	delete[] visited;
 	return;
+}
+
+std::string horiControlNet::toString() {
+	std::ostringstream os;
+	os << "PointNum: " << PointNum << "\n";
+	for (int i = 0; i < PointNum; i++) {
+		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
+	}
+	return os.str();
 }

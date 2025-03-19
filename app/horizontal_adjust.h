@@ -1,4 +1,5 @@
 #pragma once
+#include<string>
 
 class horiPoint {
 public:
@@ -61,12 +62,14 @@ public:
 
 	void readData(const char* filename);
 	void solve();
+	std::string toString();
 
 private:
 	horiPoint* findPoint(const char* name);
 	angleStation* findStation(const horiPoint* begin);
 	double getAzimuth(const horiPoint* begin, const horiPoint* end);
-	void approxiTriangulateration();
+	bool forwardIntersection(const horiPoint* known1, const horiPoint* known2, horiPoint* unknown);
+	void approxiCoordTriangulateration();
 	void approxiCoordTriangulation(bool* visited);
 	void getInitialAzimuth();
 
