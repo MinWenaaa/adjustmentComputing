@@ -52,7 +52,7 @@ struct AzimuthVal {
 class horiControlNet {
 public:
 	horiControlNet() : PointNum(0), KnownPointNum(0), angleStationNum(0), angleNum_All(0), lengthNum(0), azimuthNum(0),
-		pointData(nullptr), angleStations(nullptr), lengthData(nullptr), azimuthData(nullptr) {}
+		pointData(nullptr), angleStations(nullptr), lengthData(nullptr), azimuthData(nullptr), painted(false) {}
 	~horiControlNet() {
 		delete[] pointData;
 		delete[] angleStations;
@@ -63,6 +63,8 @@ public:
 	void readData(const char* filename);
 	void solve();
 	std::string toString();
+	bool painted;
+	void OnDraw(CDC* pDC);
 
 private:
 	horiPoint* findPoint(const char* name);

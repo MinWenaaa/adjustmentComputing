@@ -165,6 +165,22 @@ void CMFCApplication2Dlg::OnPaint()
 	}
 	else
 	{
+		// 获取指定控件的设备上下文
+		CWnd* pStaticCtrl = horizontal_netDlg->GetDlgItem(IDC_PAINT_AREA); // 获取控件指针
+		if (pStaticCtrl)
+		{
+			CRect rect;
+			pStaticCtrl->GetClientRect(&rect); // 获取控件的客户区矩形
+			CDC* pDC = pStaticCtrl->GetDC(); // 获取控件的设备上下文
+
+			if (horiNet.painted) {
+				horiNet.OnDraw(pDC);
+			}
+
+			pStaticCtrl->ReleaseDC(pDC); // 释放设备上下文
+		}
+
+		// 调用基类的 OnPaint 函数以处理其他默认绘制
 		CDialogEx::OnPaint();
 	}
 }
@@ -273,6 +289,7 @@ void CMFCApplication2Dlg::OnBnClickedBtnSolve()
 			CString cstrText(str.c_str());
 			pStatic->SetWindowText(cstrText);
 		}
+		OnPaint();
 		break;
 	}
 }

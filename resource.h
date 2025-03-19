@@ -24,6 +24,7 @@
 #define IDC_NETWORK_LEVEL_STRING4       1010
 #define IDC_COORD_APPROXI               1010
 #define IDC_HORIZONTAL_COORD_STRING     1014
+#define IDC_PAINT_AREA                  1015
 
 // Next default values for new objects
 // 
@@ -31,7 +32,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1016
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

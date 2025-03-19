@@ -127,6 +127,7 @@ void horiControlNet::solve() {
 			visited[i] = i < KnownPointNum;
 		approxiCoordTriangulation(visited);
 	}
+	painted = true;
 }
 
 void horiControlNet::approxiCoordTriangulateration() {
@@ -277,4 +278,48 @@ std::string horiControlNet::toString() {
 		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
 	}
 	return os.str();
+}
+
+void horiControlNet::OnDraw(CDC* pDC) {
+	double maxX, minX, maxY, minY;
+	maxX = minX = pointData[0].X;
+	maxY = minY = pointData[0].Y;
+	for (int i = 1; i < PointNum; i++) {
+		if (pointData[i].X > maxX) maxX = pointData[i].X;
+		if (pointData[i].X < minX) minX = pointData[i].X;
+		if (pointData[i].Y > maxY) maxY = pointData[i].Y;
+		if (pointData[i].Y < minY) minY = pointData[i].Y;
+	}
+
+	double scale = max((maxX - minX) / 600, (maxY - minY)/850);
+	CPen redPen(PS_SOLID, 3, RGB(255, 0, 0)); // 创建红色画笔
+	CPen* pOldPen = pDC->SelectObject(&redPen); // 选择画笔
+	CFont font;
+	font.CreatePointFont(120, _T("Arial")); // 创建一个字体对象，大小为 200/10 = 20 磅，字体为 Arial
+	CFont* pOldFont = pDC->SelectObject(&font);
+	pDC->SetTextColor(RGB(255, 0, 0)); // 设置文本颜色为红色
+	pDC->SetBkMode(TRANSPARENT); // 设置背景模式为透明
+	double x, y;
+	for (int i = 0; i < PointNum; i++) {
+		x = 50 + (pointData[i].Y - minY) / scale; y = 650 + (pointData[i].X - minX) / -scale;
+		pDC->Rectangle(x - 3, y - 3, x + 3, y + 3);
+		CString cstr(pointData[i].Name);
+		pDC->TextOut(x-30, y-30, cstr);
+	}
+	pDC->SelectObject(pOldPen); // 恢复旧的画笔
+	pDC->SelectObject(pOldFont);
+
+	CPen blackPen(PS_SOLID, 2, RGB(20, 20, 20)); // 创建黑色画笔
+	double x1, x2, y1, y2;
+	angleStation* temp = nullptr;
+	for (int i = 0; i < angleStationNum; i++) {
+		temp = &angleStations[i];
+		x1 = 50 + (temp->pBegin->Y - minY) / scale; y1 = 650 + (temp->pBegin->X - minX) / -scale;
+		for (int j = 0; j < temp->valueNum; j++) {
+			x2 = 50 + (temp->values[j].end->Y - minY) / scale; y2 = 650 + (temp->values[j].end->X - minX) / -scale;
+			pDC->MoveTo(x1, y1);
+			pDC->LineTo(x2, y2);
+		}
+	}
+	pDC->SelectObject(pOldPen); // 恢复旧的画笔
 }
