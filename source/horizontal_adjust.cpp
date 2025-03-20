@@ -109,8 +109,8 @@ bool horiControlNet::forwardIntersection(const horiPoint* known1, const horiPoin
 	double angle2 = deg2rad(abs(subDeg(getAzimuth(known2, unknown), getAzimuth(known2, known1))));
 	double angle12 = deg2rad(abs(subDeg(getAzimuth(unknown, known1), getAzimuth(unknown, known2))));
 	double length12 = sqrt((known1->X - known2->X) * (known1->X - known2->X) + (known1->Y - known2->Y) * (known1->Y - known2->Y));
-	double length1 = length12 * sin(angle2) / sin(angle12);
-	double length2 = length12 * sin(angle1) / sin(angle12);
+	double length1 = abs(length12 * sin(angle2) / sin(angle12));
+	double length2 = abs(length12 * sin(angle1) / sin(angle12));
 	double azimuth1 = deg2rad(getAzimuth(known1, unknown)), azimuth2 = deg2rad(getAzimuth(known2, unknown));
 	unknown->X = (known1->X + length1 * cos(azimuth1) + known2->X + length2 * cos(azimuth2)) / 2;
 	unknown->Y = (known1->Y + length1 * sin(azimuth1) + known2->Y + length2 * sin(azimuth2)) / 2;
@@ -275,19 +275,19 @@ void horiControlNet::getInitialAzimuth() {
 
 std::string horiControlNet::toString() {
 	std::ostringstream os;
-	//os << "PointNum: " << PointNum << "\n";
-	//for (int i = 0; i < PointNum; i++) {
-	//	os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
-	//}
-
-	os << "stationNum: " << angleStationNum << "\n";
-	for (int i = 0; i < angleStationNum; i++) {
-		os << "name: " << angleStations[i].pBegin->Name << "  first angle: " << angleStations[i].first_azimuth << "\n";
-		for (int j = 0; j < angleStations[i].valueNum; j++) {
-			os << "end: " << angleStations[i].values[j].end->Name << "  survey: " << sumDeg(angleStations[i].first_azimuth, angleStations[i].values[j].surveyVal) << "\n";
-		}
-		os << "\n";
+	os << "PointNum: " << PointNum << "\n";
+	for (int i = 0; i < PointNum; i++) {
+		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
 	}
+
+	//os << "stationNum: " << angleStationNum << "\n";
+	//for (int i = 0; i < angleStationNum; i++) {
+	//	os << "name: " << angleStations[i].pBegin->Name << "  first angle: " << angleStations[i].first_azimuth << "\n";
+	//	for (int j = 0; j < angleStations[i].valueNum; j++) {
+	//		os << "end: " << angleStations[i].values[j].end->Name << "  survey: " << sumDeg(angleStations[i].first_azimuth, angleStations[i].values[j].surveyVal) << "\n";
+	//	}
+	//	os << "\n";
+	//}
 	return os.str();
 }
 

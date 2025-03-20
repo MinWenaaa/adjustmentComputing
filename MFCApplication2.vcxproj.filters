@@ -13,17 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="源文件\app">
-      <UniqueIdentifier>{72b03921-c75f-4d30-87d4-c28952a0d8fc}</UniqueIdentifier>
+    <Filter Include="源文件\source">
+      <UniqueIdentifier>{4d265b19-e29e-44c3-89b4-167319aca21d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MFCApplication2.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MFCApplication2Dlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -36,69 +30,62 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="app\basic_func.h">
-      <Filter>源文件\app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\matrix.hpp">
-      <Filter>源文件\app</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DataStructure\practice4_Graph\mylib\graph.hpp">
-      <Filter>源文件\app</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkLevel.h">
+    <ClInclude Include="ui\AttachedLevel.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AttachedLevel.h">
+    <ClInclude Include="ui\horizontal_network.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="app\level_adjust.h">
-      <Filter>源文件\app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\horizontal_adjust.h">
-      <Filter>源文件\app</Filter>
-    </ClInclude>
-    <ClInclude Include="horizontal_network.h">
+    <ClInclude Include="ui\MFCApplication2.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\MFCApplication2Dlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\NetworkLevel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="source\basic_func.h">
+      <Filter>源文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\horizontal_adjust.h">
+      <Filter>源文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\level_adjust.h">
+      <Filter>源文件\source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\matrix.hpp">
+      <Filter>源文件\source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MFCApplication2.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MFCApplication2Dlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="app\basic_func.cpp">
-      <Filter>源文件\app</Filter>
-    </ClCompile>
-    <ClCompile Include="NetworkLevel.cpp">
+    <ClCompile Include="ui\AttachedLevel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="AttachedLevel.cpp">
+    <ClCompile Include="ui\horizontal_network.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="app\level_adjust.cpp">
-      <Filter>源文件\app</Filter>
-    </ClCompile>
-    <ClCompile Include="app\horizontal_adjust.cpp">
-      <Filter>源文件\app</Filter>
-    </ClCompile>
-    <ClCompile Include="horizontal_network.cpp">
+    <ClCompile Include="ui\MFCApplication2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="MFCApplication2.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\MFCApplication2.rc2">
-      <Filter>资源文件</Filter>
-    </None>
+    <ClCompile Include="ui\MFCApplication2Dlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\NetworkLevel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="source\basic_func.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\horizontal_adjust.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\level_adjust.cpp">
+      <Filter>源文件\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MFCApplication2.ico">
@@ -118,5 +105,15 @@
     <Text Include="app\测角平面控制网.txt">
       <Filter>资源文件</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ui\MFCApplication2.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MFCApplication2.rc2">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

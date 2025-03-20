@@ -76,7 +76,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)/app;$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)source;$(SolutionDir)ui;$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -86,7 +86,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)/app;$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)source;$(SolutionDir)ui;$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -185,42 +185,35 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\DataStructure\practice4_Graph\mylib\graph.hpp" />
-    <ClInclude Include="app\basic_func.h" />
-    <ClInclude Include="app\horizontal_adjust.h" />
-    <ClInclude Include="app\level_adjust.h" />
-    <ClInclude Include="app\matrix.hpp" />
-    <ClInclude Include="AttachedLevel.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="horizontal_network.h" />
-    <ClInclude Include="MFCApplication2.h" />
-    <ClInclude Include="MFCApplication2Dlg.h" />
-    <ClInclude Include="NetworkLevel.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="source\basic_func.h" />
+    <ClInclude Include="source\horizontal_adjust.h" />
+    <ClInclude Include="source\level_adjust.h" />
+    <ClInclude Include="source\matrix.hpp" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ui\AttachedLevel.h" />
+    <ClInclude Include="ui\horizontal_network.h" />
+    <ClInclude Include="ui\MFCApplication2.h" />
+    <ClInclude Include="ui\MFCApplication2Dlg.h" />
+    <ClInclude Include="ui\NetworkLevel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="app\basic_func.cpp" />
-    <ClCompile Include="app\horizontal_adjust.cpp" />
-    <ClCompile Include="app\level_adjust.cpp" />
-    <ClCompile Include="AttachedLevel.cpp" />
-    <ClCompile Include="horizontal_network.cpp" />
-    <ClCompile Include="MFCApplication2.cpp" />
-    <ClCompile Include="MFCApplication2Dlg.cpp" />
-    <ClCompile Include="NetworkLevel.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="MFCApplication2.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\MFCApplication2.rc2" />
+    <ClCompile Include="source\basic_func.cpp" />
+    <ClCompile Include="source\horizontal_adjust.cpp" />
+    <ClCompile Include="source\level_adjust.cpp" />
+    <ClCompile Include="ui\AttachedLevel.cpp" />
+    <ClCompile Include="ui\horizontal_network.cpp" />
+    <ClCompile Include="ui\MFCApplication2.cpp" />
+    <ClCompile Include="ui\MFCApplication2Dlg.cpp" />
+    <ClCompile Include="ui\NetworkLevel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MFCApplication2.ico" />
@@ -230,6 +223,12 @@
     <Text Include="app\测角平面控制网.txt" />
     <Text Include="app\边角平面控制网.txt" />
     <Text Include="app\附合水准观测数据.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ui\MFCApplication2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MFCApplication2.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
