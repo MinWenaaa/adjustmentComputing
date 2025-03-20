@@ -1,5 +1,5 @@
 #pragma once
-
+const double M_PI = 3.14159265358979323846;
 double deg2rad(int deg, int min, int sec);
 double deg2rad(double deg);
 double rad2deg(double rad);

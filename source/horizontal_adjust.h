@@ -61,7 +61,7 @@ public:
 	}
 
 	void readData(const char* filename);
-	std::string solve();
+	void solve();
 	std::string toString();
 	bool painted;
 	void OnDraw(CDC* pDC);

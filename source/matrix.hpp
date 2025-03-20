@@ -19,7 +19,7 @@ namespace WenMin {
 				data[i] = other.data[i];
 		}
 		~Matrix() {
-			delete[] data;
+			//delete[] data;
 		}
 
 		int getRows() const { return rows };
@@ -91,7 +91,7 @@ namespace WenMin {
 		}	
 		
 		// «ÛTæÿ’Û
-		t(0, 0) = sqrt((*this)(0, 0));
+		t(0, 0) = sqrt(abs((*this)(0, 0)));
 		for (int j = 1; j < cols; ++j) {
 			t(0, j) = (*this)(0, j) / t(0, 0);
 		}	

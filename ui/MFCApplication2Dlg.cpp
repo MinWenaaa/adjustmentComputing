@@ -282,11 +282,8 @@ void CMFCApplication2Dlg::OnBnClickedBtnSolve()
 		}
 		break;
 	case 2:
-		std::string str = horiNet.solve();
-		CString cstrText(str.c_str());
+		horiNet.solve();
 		pStatic = horizontal_netDlg->GetDlgItem(IDC_HORI_MATRIX_STRING);
-		if (pStatic != nullptr)pStatic->SetWindowText(cstrText);
-		pStatic = horizontal_netDlg->GetDlgItem(IDC_HORIZONTAL_COORD_STRING);
 		if (pStatic != nullptr) {
 			std::string str = horiNet.toString();
 			CString cstrText(str.c_str());

@@ -2,8 +2,6 @@
 #include "basic_func.h"
 #include <cmath>
 
-const double M_PI = 3.14159265358979323846;
-
 double deg2rad(int deg, int min, int sec) {
 	return (deg + double(min) / 60 + double(sec) / 3600) * M_PI / 180;
 }

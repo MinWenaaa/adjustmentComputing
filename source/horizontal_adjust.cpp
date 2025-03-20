@@ -52,7 +52,7 @@ void horiControlNet::readData(const char* fileName) {
 				end = &pointData[tempPoint++];
 			}
 			angleStations[i].values[j].end = end;
-			angleStations[i].values[j].surveyVal = x;
+			angleStations[i].values[j].surveyVal = deg2rad(x);
 		}
 	}
 
@@ -69,7 +69,7 @@ void horiControlNet::readData(const char* fileName) {
 		azimuthData = new AzimuthVal[azimuthNum];
 		for (int i = 0; i < azimuthNum; i++) {
 			file >> name >> name2 >> x;
-			azimuthData[i] = AzimuthVal(findPoint(name), findPoint(name2), x);
+			azimuthData[i] = AzimuthVal(findPoint(name), findPoint(name2), deg2rad(x));
 		}
 	}
 }
@@ -97,8 +97,8 @@ double horiControlNet::getAzimuth(const horiPoint* begin, const horiPoint* end) 
 	if (station) {
 		for (int i = 0; i < station->valueNum; i++) {
 			if (station->values[i].end != end) continue;
-			result = sumDeg(station->values[i].surveyVal, station->first_azimuth);
-			if (result > 360) result -= 360;
+			result = station->values[i].surveyVal+ station->first_azimuth;
+			if (result > 2*M_PI) result -= 2*M_PI;
 			return result;
 		}
 	}
@@ -106,19 +106,19 @@ double horiControlNet::getAzimuth(const horiPoint* begin, const horiPoint* end) 
 }
 
 bool horiControlNet::forwardIntersection(const horiPoint* known1, const horiPoint* known2, horiPoint* unknown) {
-	double angle1 = deg2rad(abs(subDeg(getAzimuth(known1, unknown), getAzimuth(known1, known2))));
-	double angle2 = deg2rad(abs(subDeg(getAzimuth(known2, unknown), getAzimuth(known2, known1))));
-	double angle12 = deg2rad(abs(subDeg(getAzimuth(unknown, known1), getAzimuth(unknown, known2))));
+	double angle1 = abs(getAzimuth(known1, unknown)- getAzimuth(known1, known2));
+	double angle2 = abs(getAzimuth(known2, unknown)- getAzimuth(known2, known1));
+	double angle12 = abs(getAzimuth(unknown, known1)- getAzimuth(unknown, known2));
 	double length12 = sqrt((known1->X - known2->X) * (known1->X - known2->X) + (known1->Y - known2->Y) * (known1->Y - known2->Y));
 	double length1 = abs(length12 * sin(angle2) / sin(angle12));
 	double length2 = abs(length12 * sin(angle1) / sin(angle12));
-	double azimuth1 = deg2rad(getAzimuth(known1, unknown)), azimuth2 = deg2rad(getAzimuth(known2, unknown));
+	double azimuth1 = getAzimuth(known1, unknown), azimuth2 = getAzimuth(known2, unknown);
 	unknown->X = (known1->X + length1 * cos(azimuth1) + known2->X + length2 * cos(azimuth2)) / 2;
 	unknown->Y = (known1->Y + length1 * sin(azimuth1) + known2->Y + length2 * sin(azimuth2)) / 2;
 	return true;
 }
 
-std::string horiControlNet::solve() {
+void horiControlNet::solve() {
 	getInitialAzimuth();
 	if (lengthNum) {	// 边角网
 		approxiCoordTriangulateration();
@@ -130,13 +130,14 @@ std::string horiControlNet::solve() {
 	}
 	painted = true;
 
-	WenMin::Matrix<double> B(angleNum_All + lengthNum + azimuthNum, PointNum * 2 + angleStationNum);
+	WenMin::Matrix<double> B(angleNum_All + lengthNum + azimuthNum, (PointNum-KnownPointNum) * 2 + angleStationNum);
 	WenMin::Matrix<double> L(angleNum_All + lengthNum + azimuthNum, 1);
 	WenMin::Matrix<double> P(angleNum_All + lengthNum + azimuthNum, angleNum_All + lengthNum + azimuthNum);
 
 	int i = 0, stationNum = 0;
 	angleStation* temp = nullptr;
 	horiPoint* begin = nullptr, * end = nullptr;
+	double temp_l = 0;
 	double S2 = 0, aij = 0, bij = 0;
 	for (; i < angleNum_All;) {
 		temp = &angleStations[stationNum]; begin = temp->pBegin;
@@ -144,12 +145,22 @@ std::string horiControlNet::solve() {
 			end = temp->values[j].end;
 			S2 = pow(begin->X - end->X, 2) + pow(begin->Y - end->Y, 2);
 			aij = (begin->Y - end->Y) / S2; bij = -(begin->X - end->X) / S2;
-			B(i, (begin - pointData) * 2) = aij;
-			B(i, (begin - pointData) * 2 + 1) = bij;
-			B(i, (end - pointData) * 2) = -aij;
-			B(i, (end - pointData) * 2 + 1) = -bij;
-			B(i, PointNum * 2 + stationNum) = -1;
-			L(i, 0) = subDeg(subDeg(azimuth(end->X - begin->X, end->Y - begin->Y), temp->first_azimuth), temp->values[j].surveyVal);
+			if (!begin->known) {
+				B(i, (begin - pointData - KnownPointNum) * 2) = aij;
+				B(i, (begin - pointData - KnownPointNum) * 2 + 1) = bij;
+			}
+			if (!end->known) {
+				B(i, (end - pointData - KnownPointNum) * 2) = -aij;
+				B(i, (end - pointData - KnownPointNum) * 2 + 1) = -bij;
+			}
+			B(i, (PointNum - KnownPointNum) * 2 + stationNum) = -1;
+			temp_l = deg2rad(azimuth(end->X - begin->X, end->Y - begin->Y)) - temp->first_azimuth - temp->values[j].surveyVal;
+			if (temp_l < -6)temp_l = temp_l + 2*M_PI;
+	//		//if (temp_l < -360) temp_l += 360;
+	//		//else if (temp_l < -300) temp_l = -abs(subDeg(360, -temp_l));
+	//		//else if (temp_l > 360) temp_l -= 360;
+	//		//else temp_l = -abs(subDeg(360, temp_l));
+			L(i, 0) = temp_l;
 			P(i, i) = 1;
 		}
 		stationNum++;
@@ -159,11 +170,15 @@ std::string horiControlNet::solve() {
 	for (; i < angleNum_All + lengthNum; i++) {
 		temp2 = &lengthData[i - angleNum_All];
 		begin = temp2->pBegin; end = temp2->pEnd;
-		aij = -(begin->X - end->X) / temp2->length; bij = -(begin->Y - end->Y) / temp2->length;
-		B(i, (begin - pointData) * 2) = aij;
-		B(i, (begin - pointData) * 2 + 1) = bij;
-		B(i, (end - pointData) * 2) = -aij;
-		B(i, (end - pointData) * 2 + 1) = -bij;
+		aij = (begin->X - end->X) / temp2->length; bij = (begin->Y - end->Y) / temp2->length;
+		if (!begin->known) {
+			B(i, (begin - pointData - KnownPointNum) * 2) = aij;
+			B(i, (begin - pointData - KnownPointNum) * 2 + 1) = bij;
+		}
+		if (!end->known) {
+			B(i, (end - pointData - KnownPointNum) * 2) = -aij;
+			B(i, (end - pointData - KnownPointNum) * 2 + 1) = -bij;
+		}
 		L(i, 0) = sqrt(pow(begin->X - end->X, 2) + pow(begin->Y - end->Y, 2)) - temp2->length;
 		P(i, i) = 1;
 	}
@@ -174,11 +189,21 @@ std::string horiControlNet::solve() {
 		begin = temp3->pBegin; end = temp3->pEnd;
 		S2 = pow(begin->X - end->X, 2) + pow(begin->Y - end->Y, 2);
 		aij = (begin->Y - end->Y) / S2; bij = -(begin->X - end->X) / S2;
-		B(i, (begin - pointData) * 2) = aij;
-		B(i, (begin - pointData) * 2 + 1) = bij;
-		B(i, (end - pointData) * 2) = -aij;
-		B(i, (end - pointData) * 2 + 1) = -bij;
-		L(i, 0) = subDeg(azimuth(end->X - begin->X, end->Y - begin->Y), temp3->azimuth);
+		if(!begin->known){
+			B(i, (begin - pointData - KnownPointNum) * 2) = aij;
+			B(i, (begin - pointData - KnownPointNum) * 2 + 1) = bij;
+		}
+		if(!end->known){
+			B(i, (end - pointData - KnownPointNum) * 2) = -aij;
+			B(i, (end - pointData - KnownPointNum) * 2 + 1) = -bij;
+		}
+		B(i, PointNum * 2 + findStation(begin) - angleStations) = -1;
+		temp_l = deg2rad(azimuth(end->X - begin->X, end->Y - begin->Y)) - temp3->azimuth;
+	//	//if (temp_l < -360) temp_l += 360;
+	//	//else if (temp_l < -300) temp_l = -abs(subDeg(360, -temp_l));
+	//	//else if (temp_l > 360) temp_l -= 360;
+	//	//else temp_l = -abs(subDeg(360, temp_l));
+		L(i, 0) = temp_l;
 		P(i, i) = 1;
 	}
 
@@ -186,12 +211,19 @@ std::string horiControlNet::solve() {
 	WenMin::Matrix<double> tep2 = B.transpose() * P * L;
 	WenMin::Matrix<double> x = tep.inverse() * tep2;
 	WenMin::Matrix<double> V = B * x - L;
-	for (int i = 0; i < PointNum; i++) {
+	for (int i = KnownPointNum; i < PointNum; i++) {
 		pointData[i].X += x(i * 2, 0);
 		pointData[i].Y += x(i * 2 + 1, 0);
 	}
-	
-	return tep.inverse().toString();
+	std::ofstream outFile("BL.txt");
+	if (!outFile.is_open()) {
+		std::cerr << "Error: Unable to open file " << std::endl;
+		return; 
+	}
+
+	outFile << "B:\n" << B.toString() << "\n\n" << "L:\n" << L.toString() << "\n\nBTPB:\n" << tep.toString() << "\n\nBTPL:\n" << tep2.toString();
+	outFile.close();
+	return;
 }
 
 void horiControlNet::approxiCoordTriangulateration() {
@@ -212,8 +244,8 @@ void horiControlNet::approxiCoordTriangulateration() {
 			else continue;
 			if (visited[target - pointData]) continue;
 			double azimuth = getAzimuth(begin, target);
-			target->X = begin->X + lengthData[i].length * cos(deg2rad(azimuth));
-			target->Y = begin->Y + lengthData[i].length * sin(deg2rad(azimuth));
+			target->X = begin->X + lengthData[i].length * cos(azimuth);
+			target->Y = begin->Y + lengthData[i].length * sin(azimuth);
 			visited[target - pointData] = true;
 			pointQueue.push(target);
 		}
@@ -283,7 +315,7 @@ void horiControlNet::getInitialAzimuth() {
 		for (int j = 0; j < tempStation->valueNum; j++) {
 			if (tempStation->values[j].end->known) {
 				begin = tempStation->pBegin; end = tempStation->values[j].end;
-				tempStation->first_azimuth = azimuth(end->X - begin->X, end->Y - begin->Y) - tempStation->values[j].surveyVal;
+				tempStation->first_azimuth = deg2rad(azimuth(end->X - begin->X, end->Y - begin->Y)) - tempStation->values[j].surveyVal;
 				visited[i] = true;
 				break;
 			}
@@ -297,14 +329,16 @@ void horiControlNet::getInitialAzimuth() {
 		tempAzimuth = &azimuthData[i];
 		station = findStation(tempAzimuth->pBegin);
 		if (!visited[station-angleStations]) { 
-			station->first_azimuth = tempAzimuth->azimuth; 
+			target = tempAzimuth->pEnd;
+			station->first_azimuth = tempAzimuth->azimuth - getAzimuth(station->pBegin, target); 
 			visited[station - angleStations] = true;
 		}
 		station = findStation(tempAzimuth->pEnd);
+		target = tempAzimuth->pBegin;
 		if (!visited[station - angleStations]) {
-			double value = sumDeg(tempAzimuth->azimuth, 180);
-			if (value > 360) value -= 360;
-			station->first_azimuth = value;
+			double value = tempAzimuth->azimuth+M_PI;
+			if (value > 2*M_PI) value -= 2*M_PI;
+			station->first_azimuth = value - getAzimuth(station->pBegin, target);
 			visited[station - angleStations] = true;
 		}
 
@@ -324,9 +358,9 @@ void horiControlNet::getInitialAzimuth() {
 			if (visited[nextStation - angleStations]) continue;	// 已经标记过
 			for (int j = 0; j < nextStation->valueNum; j++) {	// 计算方向角并标记
 				if (nextStation->values[j].end != tempStation->pBegin) continue;
-				double temp = sumDeg(tempStation->first_azimuth, tempStation->values[i].surveyVal) + 180;
-				if (temp > 360) temp -= 360;
-				nextStation->first_azimuth = subDeg(temp, nextStation->values[j].surveyVal);
+				double temp = tempStation->first_azimuth+ tempStation->values[i].surveyVal + M_PI;
+				if (temp > 2*M_PI) temp -= 2*M_PI;
+				nextStation->first_azimuth = temp - nextStation->values[j].surveyVal;
 				stationQueue.push(nextStation);
 				visited[nextStation - angleStations] = true;
 			}
@@ -344,14 +378,14 @@ std::string horiControlNet::toString() {
 		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
 	}
 
-	//os << "stationNum: " << angleStationNum << "\n";
-	//for (int i = 0; i < angleStationNum; i++) {
-	//	os << "name: " << angleStations[i].pBegin->Name << "  first angle: " << angleStations[i].first_azimuth << "\n";
-	//	for (int j = 0; j < angleStations[i].valueNum; j++) {
-	//		os << "end: " << angleStations[i].values[j].end->Name << "  survey: " << sumDeg(angleStations[i].first_azimuth, angleStations[i].values[j].surveyVal) << "\n";
-	//	}
-	//	os << "\n";
-	//}
+	os << "stationNum: " << angleStationNum << "\n";
+	for (int i = 0; i < angleStationNum; i++) {
+		os << "name: " << angleStations[i].pBegin->Name << "  first angle: " << angleStations[i].first_azimuth << "\n";
+		for (int j = 0; j < angleStations[i].valueNum; j++) {
+			os << "end: " << angleStations[i].values[j].end->Name << "  survey: " << angleStations[i].first_azimuth+angleStations[i].values[j].surveyVal << "\n";
+		}
+		os << "\n";
+	}
 	return os.str();
 }
 
