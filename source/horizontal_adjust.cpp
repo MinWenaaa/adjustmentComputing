@@ -170,7 +170,7 @@ void horiControlNet::solve() {
 	for (; i < angleNum_All + lengthNum; i++) {
 		temp2 = &lengthData[i - angleNum_All];
 		begin = temp2->pBegin; end = temp2->pEnd;
-		aij = (begin->X - end->X) / temp2->length; bij = (begin->Y - end->Y) / temp2->length;
+		aij = -(begin->X - end->X) / temp2->length; bij = -(begin->Y - end->Y) / temp2->length;
 		if (!begin->known) {
 			B(i, (begin - pointData - KnownPointNum) * 2) = aij;
 			B(i, (begin - pointData - KnownPointNum) * 2 + 1) = bij;
@@ -212,6 +212,8 @@ void horiControlNet::solve() {
 	WenMin::Matrix<double> x = tep.inverse() * tep2;
 	WenMin::Matrix<double> V = B * x - L;
 	for (int i = KnownPointNum; i < PointNum; i++) {
+		pointData[i].vX = x(i * 2, 0);
+		pointData[i].vY = x(i * 2 + 1, 0);
 		pointData[i].X += x(i * 2, 0);
 		pointData[i].Y += x(i * 2 + 1, 0);
 	}
@@ -375,7 +377,7 @@ std::string horiControlNet::toString() {
 	std::ostringstream os;
 	os << "PointNum: " << PointNum << "\n";
 	for (int i = 0; i < PointNum; i++) {
-		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << std::fixed << std::setprecision(4) << pointData[i].Y << "\n";
+		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << pointData[i].vX << " " << std::fixed << std::setprecision(4) << pointData[i].Y<< " " <<pointData[i].vY << " " << "\n";
 	}
 
 	os << "stationNum: " << angleStationNum << "\n";

@@ -3,15 +3,15 @@
 
 class horiPoint {
 public:
-	horiPoint() : Name(""), known(false), X(0), Y(0) {}
-	horiPoint(const char name[]) { strcpy_s(this->Name, name); }
-	horiPoint(const char name[], double X, double Y) : X(X), Y(Y), known(true) {
+	horiPoint() : Name(""), known(false), X(0), Y(0), vX(0), vY(0) {}
+	horiPoint(const char name[]):known(false), X(0), Y(0), vX(0), vY(0) { strcpy_s(this->Name, name); }
+	horiPoint(const char name[], double X, double Y) : X(X), Y(Y), vX(0), vY(0), known(true) {
 		strcpy_s(this->Name, name);
 	}
 
 	char Name[50];
 	bool known;
-	double X, Y;
+	double X, Y, vX, vY;
 };
 // ----------------------------------------------------------------------------
 struct angleSurvey {
