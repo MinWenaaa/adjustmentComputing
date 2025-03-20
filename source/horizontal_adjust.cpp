@@ -1,6 +1,7 @@
 #include "pch.h"
 #include"horizontal_adjust.h"
 #include"basic_func.h"
+#include"matrix.hpp"
 #include<fstream>
 #include<sstream>
 #include<iostream>
@@ -117,7 +118,7 @@ bool horiControlNet::forwardIntersection(const horiPoint* known1, const horiPoin
 	return true;
 }
 
-void horiControlNet::solve() {
+std::string horiControlNet::solve() {
 	getInitialAzimuth();
 	if (lengthNum) {	// 边角网
 		approxiCoordTriangulateration();
@@ -128,6 +129,69 @@ void horiControlNet::solve() {
 		approxiCoordTriangulation(visited);
 	}
 	painted = true;
+
+	WenMin::Matrix<double> B(angleNum_All + lengthNum + azimuthNum, PointNum * 2 + angleStationNum);
+	WenMin::Matrix<double> L(angleNum_All + lengthNum + azimuthNum, 1);
+	WenMin::Matrix<double> P(angleNum_All + lengthNum + azimuthNum, angleNum_All + lengthNum + azimuthNum);
+
+	int i = 0, stationNum = 0;
+	angleStation* temp = nullptr;
+	horiPoint* begin = nullptr, * end = nullptr;
+	double S2 = 0, aij = 0, bij = 0;
+	for (; i < angleNum_All;) {
+		temp = &angleStations[stationNum]; begin = temp->pBegin;
+		for (int j = 0; j < temp->valueNum; j++,i++) {	// 一个观测值
+			end = temp->values[j].end;
+			S2 = pow(begin->X - end->X, 2) + pow(begin->Y - end->Y, 2);
+			aij = (begin->Y - end->Y) / S2; bij = -(begin->X - end->X) / S2;
+			B(i, (begin - pointData) * 2) = aij;
+			B(i, (begin - pointData) * 2 + 1) = bij;
+			B(i, (end - pointData) * 2) = -aij;
+			B(i, (end - pointData) * 2 + 1) = -bij;
+			B(i, PointNum * 2 + stationNum) = -1;
+			L(i, 0) = subDeg(subDeg(azimuth(end->X - begin->X, end->Y - begin->Y), temp->first_azimuth), temp->values[j].surveyVal);
+			P(i, i) = 1;
+		}
+		stationNum++;
+	}
+
+	lengthSurveyVal* temp2 = nullptr;
+	for (; i < angleNum_All + lengthNum; i++) {
+		temp2 = &lengthData[i - angleNum_All];
+		begin = temp2->pBegin; end = temp2->pEnd;
+		aij = -(begin->X - end->X) / temp2->length; bij = -(begin->Y - end->Y) / temp2->length;
+		B(i, (begin - pointData) * 2) = aij;
+		B(i, (begin - pointData) * 2 + 1) = bij;
+		B(i, (end - pointData) * 2) = -aij;
+		B(i, (end - pointData) * 2 + 1) = -bij;
+		L(i, 0) = sqrt(pow(begin->X - end->X, 2) + pow(begin->Y - end->Y, 2)) - temp2->length;
+		P(i, i) = 1;
+	}
+
+	AzimuthVal* temp3 = nullptr;
+	for (; i < angleNum_All + lengthNum + azimuthNum; i++) {
+		temp3 = &azimuthData[i - angleNum_All - lengthNum];
+		begin = temp3->pBegin; end = temp3->pEnd;
+		S2 = pow(begin->X - end->X, 2) + pow(begin->Y - end->Y, 2);
+		aij = (begin->Y - end->Y) / S2; bij = -(begin->X - end->X) / S2;
+		B(i, (begin - pointData) * 2) = aij;
+		B(i, (begin - pointData) * 2 + 1) = bij;
+		B(i, (end - pointData) * 2) = -aij;
+		B(i, (end - pointData) * 2 + 1) = -bij;
+		L(i, 0) = subDeg(azimuth(end->X - begin->X, end->Y - begin->Y), temp3->azimuth);
+		P(i, i) = 1;
+	}
+
+	WenMin::Matrix<double> tep = B.transpose() * P * B;
+	WenMin::Matrix<double> tep2 = B.transpose() * P * L;
+	WenMin::Matrix<double> x = tep.inverse() * tep2;
+	WenMin::Matrix<double> V = B * x - L;
+	for (int i = 0; i < PointNum; i++) {
+		pointData[i].X += x(i * 2, 0);
+		pointData[i].Y += x(i * 2 + 1, 0);
+	}
+	
+	return tep.inverse().toString();
 }
 
 void horiControlNet::approxiCoordTriangulateration() {

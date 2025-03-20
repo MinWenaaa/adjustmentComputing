@@ -198,6 +198,7 @@
     <ClInclude Include="ui\MFCApplication2.h" />
     <ClInclude Include="ui\MFCApplication2Dlg.h" />
     <ClInclude Include="ui\NetworkLevel.h" />
+    <ClInclude Include="ui\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -217,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MFCApplication2.ico" />
+    <Image Include="ui\res\MFCApplication2.ico" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="app\水准网数据示例.txt" />

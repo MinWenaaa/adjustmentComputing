@@ -57,6 +57,9 @@
     <ClInclude Include="source\matrix.hpp">
       <Filter>源文件\source</Filter>
     </ClInclude>
+    <ClInclude Include="ui\resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -89,6 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MFCApplication2.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="ui\res\MFCApplication2.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
