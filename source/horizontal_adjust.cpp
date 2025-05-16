@@ -373,14 +373,15 @@ void horiControlNet::getInitialAzimuth() {
 	return;
 }
 
+
 std::string horiControlNet::toString() {
 	std::ostringstream os;
-	os << "PointNum: " << PointNum << "\n";
+	os << "PointNum: " << PointNum << "\n" << "PointName:     X:     vX:     Y:     vY:\n";
 	for (int i = 0; i < PointNum; i++) {
-		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << pointData[i].vX << " " << std::fixed << std::setprecision(4) << pointData[i].Y<< " " <<pointData[i].vY << " " << "\n";
+		os << std::setw(5) << std::left << pointData[i].Name << " " << std::fixed << std::setprecision(4) << pointData[i].X << " " << pointData[i].vX << " " << std::fixed << std::setprecision(4) << pointData[i].Y << " " << pointData[i].vY << " " << "\n";
 	}
 
-	os << "stationNum: " << angleStationNum << "\n";
+	os << "\nstationNum: " << angleStationNum << "\n";
 	for (int i = 0; i < angleStationNum; i++) {
 		os << "name: " << angleStations[i].pBegin->Name << "  first angle: " << angleStations[i].first_azimuth << "\n";
 		for (int j = 0; j < angleStations[i].valueNum; j++) {
