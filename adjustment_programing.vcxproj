@@ -132,8 +132,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="lib\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\geo_object.cpp" />
+    <ClCompile Include="source\MyGUI.cpp" />
+    <ClCompile Include="source\shader.cpp" />
+    <ClCompile Include="source\solution.cpp" />
+    <ClCompile Include="source\windowPara.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\geo_object.h" />
+    <ClInclude Include="source\MyGUI.h" />
+    <ClInclude Include="source\shader.h" />
+    <ClInclude Include="source\solution.h" />
+    <ClInclude Include="source\windowPara.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\shader\point.fs" />
+    <None Include="source\shader\point.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="source\data.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

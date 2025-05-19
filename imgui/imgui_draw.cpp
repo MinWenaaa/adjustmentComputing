@@ -1232,11 +1232,11 @@ void ImDrawList::PathEllipticalArcTo(const ImVec2& center, const ImVec2& radius,
     for (int i = 0; i <= num_segments; i++)
     {
         const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-        ImVec2 point(ImCos(a) * radius.x, ImSin(a) * radius.y);
-        const ImVec2 rel((point.x * cos_rot) - (point.y * sin_rot), (point.x * sin_rot) + (point.y * cos_rot));
-        point.x = rel.x + center.x;
-        point.y = rel.y + center.y;
-        _Path.push_back(point);
+        ImVec2 Point(ImCos(a) * radius.x, ImSin(a) * radius.y);
+        const ImVec2 rel((Point.x * cos_rot) - (Point.y * sin_rot), (Point.x * sin_rot) + (Point.y * cos_rot));
+        Point.x = rel.x + center.x;
+        Point.y = rel.y + center.y;
+        _Path.push_back(Point);
     }
 }
 
