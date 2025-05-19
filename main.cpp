@@ -66,43 +66,43 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {	// 缩
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-	//WindowParas& windowPara = WindowParas::getInstance();
-	//double x, y;
-	//glfwGetCursorPos(window, &x, &y);
-	////lastX = windowPara.screen2normalX(x);
-	////lastY = windowPara.screen2normalY(y);
-	//if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-	//	press_time = glfwGetTime();
-	//	isDragging = true;
-	//}
-	//else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-	//	isDragging = false;
-	//	if ((glfwGetTime() - press_time) < 0.15 /*&& !Camera::getInstance().getRotation()*/) {	// 释放时间小于间隔，判定为点击操作
-	//		//std::cout << "click at:" << x << " " << y << std::endl;
-	//		GLfloat depth;
-	//		//glReadPixels(x, WindowParas::getInstance().SCREEN_HEIGHT - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-	//		glm::vec4 worldSpacePos;
-	//		//glm::mat4 inverseProjection = glm::inverse(SchoolMap::getInstance().projection);
-	//		glm::mat4 inverseView = glm::inverse(Camera::getInstance().getView());
+	WindowParas& windowPara = WindowParas::instance();
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	lastX = windowPara.screen2normalX(x);
+	lastY = windowPara.screen2normalY(y);
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		press_time = glfwGetTime();
+		isDragging = true;
+	}
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+		isDragging = false;
+		if ((glfwGetTime() - press_time) < 0.15 /*&& !Camera::getInstance().getRotation()*/) {	// 释放时间小于间隔，判定为点击操作
+			std::cout << "click at:" << x << " " << y << std::endl;
+			GLfloat depth;
+			glReadPixels(x, WindowParas::instance().SCREEN_HEIGHT - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+			glm::vec4 worldSpacePos;
+			glm::mat4 inverseProjection = glm::inverse(solution::instance().projection);
+			glm::mat4 inverseView = glm::inverse(Camera::getInstance().getView());
 
-	//		glm::vec4 clipSpacePos(lastX, lastY, 2.f * depth - 1.f, 1.f);
-	//		//glm::vec4 viewSpacePos = inverseProjection * clipSpacePos;
-	//		//viewSpacePos /= viewSpacePos.w;
-	//		worldSpacePos = inverseView * viewSpacePos;
-	//		worldSpacePos /= worldSpacePos.w;
-	//		//SchoolMap::getInstance().ProcessInput(worldSpacePos.x, worldSpacePos.y);
-	//	}
-	//}
+			glm::vec4 clipSpacePos(lastX, lastY, 2.f * depth - 1.f, 1.f);
+			glm::vec4 viewSpacePos = inverseProjection * clipSpacePos;
+			viewSpacePos /= viewSpacePos.w;
+			worldSpacePos = inverseView * viewSpacePos;
+			worldSpacePos /= worldSpacePos.w;
+			//SchoolMap::getInstance().ProcessInput(worldSpacePos.x, worldSpacePos.y);
+		}
+	}
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	//WindowParas& windowPara = WindowParas::getInstance();
-	//xpos = windowPara.screen2normalX(xpos);
-	//ypos = windowPara.screen2normalY(ypos);
-	//if (isDragging) {
-	//	Camera::getInstance().changeElevation(lastY - ypos);
-	//	Camera::getInstance().chopdeltaX(lastX - xpos);
-	//	lastX = xpos;
-	//	lastY = ypos;
-	//}
+	WindowParas& windowPara = WindowParas::instance();
+	xpos = windowPara.screen2normalX(xpos);
+	ypos = windowPara.screen2normalY(ypos);
+	if (isDragging) {
+		Camera::getInstance().changeElevation(lastY - ypos);
+		Camera::getInstance().chopdeltaX(lastX - xpos);
+		lastX = xpos;
+		lastY = ypos;
+	}
 }

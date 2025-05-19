@@ -10,9 +10,10 @@
 #include "solution.h"
 #include "WindowPara.h"
 
-const double std_x = 3371100;
-const double std_y = 558600;
-const double ratio = 400;
+const double std_x = 3371300;
+const double std_y = 558900;
+const double std_z = 20;
+const double ratio = 200;
 
 solution::solution() : defaultShader(new Shader("source/shader/point.vs", "source/shader/point.fs")) {
 
@@ -44,25 +45,24 @@ bool solution::readFile(const char* filename) {
 	bool type;
 	for (int i = 0; i < point_num; i++) {
 		infile >> name >> x >> y >> z >> type;
-		x = (x - std_x) / ratio; y = (y - std_y) / ratio; z = z / ratio;
+		x = (x - std_x) / ratio; y = (y - std_y) / ratio; z = (z - std_z) * 4 / ratio;
 		points[i] = new Point(name, x, y, z, type);
 		name2num[name] = i;
 	}
 
-	//std::getline(infile, line);
-	//if (line != "CLOSE_ROAD_DATA:") return false;
-	//std::getline(infile, line);
-	//if (line != "road_num:") return false;
-	//int road_num;	
-	//infile >> road_num;
-	//edges.resize(road_num);
-	//std::string start, end;
-	//infile >> start;
-	//for (int i = 0; i < road_num; i++) {
-	//	infile >> end;
-	//	edges[i] = new edge(points[name2num[start]], points[name2num[end]]);
-	//	start = end;
-	//}
+	std::getline(infile, line);
+	std::getline(infile, line);
+	if (line != "EDGE_DATA:") return false;
+	std::getline(infile, line);
+	if (line != "edge_num:") return false;
+	int edge_num;	
+	infile >> edge_num;
+	edges.resize(edge_num);
+	std::string start, end;
+	for (int i = 0; i < edge_num; i++) {
+		infile >> start >> end;
+		edges[i] = new edge(points[name2num[start]], points[name2num[end]]);
+	}
 
 }
 
@@ -72,4 +72,12 @@ void solution::Render() {
 	for (int i = 0; i < points.size(); i++) {
 		points[i]->draw();
 	}
+	for (int i = 0; i < edges.size(); i++) {
+		edges[i]->draw();
+	}
+}
+
+void solution::adaptation(float a) {
+	projection = glm::perspective(FOV, a, 0.1f, 100.0f);
+	defaultShader->setMat4("projection", projection);
 }

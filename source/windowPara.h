@@ -75,7 +75,7 @@ public:
 		else {
 			elevationAngle += delta;
 			if (elevationAngle > (PI / 2)) elevationAngle = PI / 2;
-			if (elevationAngle < 0.4f) elevationAngle = 0.4f;
+			if (elevationAngle < 0.2f) elevationAngle = 0.2f;
 		}
 		upDataView();
 	}
