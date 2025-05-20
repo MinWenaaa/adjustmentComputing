@@ -22,7 +22,7 @@ public:
 	}
 	void updateScreenSize(GLint width, GLint height);
 
-	GLint SCREEN_WIDTH = 1600, SCREEN_HEIGHT = 1200;
+	GLint SCREEN_WIDTH = 2200, SCREEN_HEIGHT = 1500;
 	GLfloat aspectRatio = 1;
 	GLint displayWidth, displayHeight;
 	GLfloat xScale = 1, yScale = 1;

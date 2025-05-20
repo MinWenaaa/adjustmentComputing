@@ -6,8 +6,8 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-const float r = 0.006;
-const float r2 = 0.015;
+const float r = 0.008;
+const float r2 = 0.018;
 const float r_edge = 0.002;
 
 Point::Point(const std::string& name, double x, double y, double z, bool type):

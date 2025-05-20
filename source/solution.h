@@ -5,6 +5,7 @@
 #include "shader.h"
 
 class solution {
+	friend class MyGUI;
 public:
 	static solution& instance() {
 		static solution instance;
@@ -19,11 +20,16 @@ public:
 
 	std::vector<Point*> points;
 	std::vector<edge*> edges;
+	std::vector<int> closed_road[4];
+	std::string inf[4];
+	std::string netinfo;
 
 	Shader* defaultShader;
 
 	glm::mat4 projection;
 
+	void change_focus(int i);
+	void focus_point(int i);
 private:
 	solution();
 	solution(const solution&) = delete;

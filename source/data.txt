@@ -36,22 +36,25 @@ CLOSE_ROAD_DATA:
 road_num:
 4
 8 55 54 38 1-2 34 33 166 55
-高差闭合差=0.9(mm),限差=4.1(mm) 路线长度=1.041(km)
-角度闭合差=9(s),限差=26(s) fx=0.001(m),fy=-0.007(m),fd=0.007(m) [s]=1023.213(m),k=1/150068,平均边长=146.173(m)
+Height Misclosure=0.9(mm),Allowable Error =4.1(mm) Route Length=1.041(km)
+Angle Misclosure=9(s),Allowable Error=26(s) fx=0.001(m),fy=-0.007(m),fd=0.007(m) [s]=1023.213(m),k=1/150068,Average Side Length=146.173(m)
 9 29 66 1-1 166 33 34 1-2 46 29
-高差闭合差=0.5(mm),限差=4.6(mm) 路线长度=1.305(km)
-角度闭合差=-2(s),限差=28(s) fx=-0.007(m),fy=-0.006(m),fd=0.009(m) [s]=1284.935(m),k=1/141841,平均边长=160.617(m)
+Height Misclosur=0.5(mm),Allowable Error=4.6(mm) Route Length=1.305(km)
+Angle Misclosure=-2(s),限差=28(s) fx=-0.007(m),fy=-0.006(m),fd=0.009(m) [s]=1284.935(m),k=1/141841,Average Side Length=160.617(m)
 6 1-3 5 1-1 66 29 1-3
-高差闭合差=0.9(mm),限差=3.7(mm) 路线长度=0.869(km)
-角度闭合差=-2(s),限差=18(s) fx=-0.007(m),fy=0.004(m),fd=0.008(m) [s]=318.676(m),k=1/39603,平均边长=159.338(m)
+Height Misclosur=0.9(mm),Allowable Error=3.7(mm) Route Length=0.869(km)
+Angle Misclosure=-2(s),Allowable Error=18(s) fx=-0.007(m),fy=0.004(m),fd=0.008(m) [s]=318.676(m),k=1/39603,Average Side Length=159.338(m)
 5 29 46 1-2 34 33
-高差闭合差=2.2(mm),限差=3.1(mm) 路线长度=0.615(km)
-fx=-0.001(m),fy=0.003(m),fd=0.003(m) [s]=287.083(m),k=1/88418,平均边长=143.541(m)
+Height Misclosur=2.2(mm),Allowable Error=3.1(mm) Route Length=0.615(km)
+fx=-0.001(m),fy=0.003(m),fd=0.003(m) [s]=287.083(m),k=1/88418,Average Side Length=143.541(m)
 NET_DATA:
-总边长：4664.0689,平均边长：155.4690,最小边长：110.4330,最大边长：187.0550
-控制网中最小角度：62.4342,最大角度：178.1800
-最大点位误差 =  0.0117 (m)
-最大点间误差 =  0.0166 (m)
-最大边长比例误差 =  15008
-平面网验后单位权中误差 =  13.39 (s
-ADJUSTMENT:
+Total Side Length: 4664.0689
+Average Side Length: 155.4690
+Minimum Side Length: 110.4330
+Maximum Side Length: 187.0550
+Minimum Angle in Control Network: 62.4342
+Maximum Angle in Control Network: 178.1800
+Maximum Point Position Error = 0.0117 (m)
+Maximum Relative Error Between Points = 0.0166 (m)
+Maximum Side Length Proportional Error = 1/15008
+Post-Adjustment Unit Weight Mean Square Error of the Plane Network = 4.39 (s)

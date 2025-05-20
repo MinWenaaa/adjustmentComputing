@@ -10,6 +10,10 @@ public:
 	void draw();
 	void changeStatus(bool status) {
 		isSelected = status;
+		GLint cubeColors[8];
+		for (int i = 0; i < 8; ++i) cubeColors[i] = status;
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_c);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeColors), cubeColors, GL_STATIC_DRAW);
 	}
 
 	std::string name;
@@ -32,6 +36,10 @@ public:
 	void draw();
 	void changeStatus(bool status) {
 		isSelected = status;
+		GLint cubeColors[24];
+		for (int i = 0; i < 24; ++i) cubeColors[i] = status;
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_c);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeColors), cubeColors, GL_STATIC_DRAW);
 	}
 
 private:

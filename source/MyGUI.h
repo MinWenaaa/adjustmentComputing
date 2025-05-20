@@ -8,6 +8,7 @@
 #include <string>
 
 class MyGUI {
+	friend class solution;
 public:
 	static MyGUI& getInstance() {
 		static MyGUI instance;
@@ -18,6 +19,7 @@ public:
 
 	void init(GLFWwindow* window);
 	void Render(int w, int h);
+	std::string point_name;
 
 private:
 	MyGUI() {}
@@ -26,4 +28,9 @@ private:
 	std::string text = "";
 	float fValue = 0.5f;
 
+	bool inited = false;
+
+	const char* getData(int i);
+
+	int temp_status=0;
 };

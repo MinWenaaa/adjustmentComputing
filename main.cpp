@@ -41,7 +41,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		solution::instance().Render();
-		MyGUI::getInstance().Render(400, 600);
+		MyGUI::getInstance().Render(600, 1000);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -77,21 +77,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	}
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
 		isDragging = false;
-		if ((glfwGetTime() - press_time) < 0.15 /*&& !Camera::getInstance().getRotation()*/) {	// 释放时间小于间隔，判定为点击操作
-			std::cout << "click at:" << x << " " << y << std::endl;
-			GLfloat depth;
-			glReadPixels(x, WindowParas::instance().SCREEN_HEIGHT - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-			glm::vec4 worldSpacePos;
-			glm::mat4 inverseProjection = glm::inverse(solution::instance().projection);
-			glm::mat4 inverseView = glm::inverse(Camera::getInstance().getView());
-
-			glm::vec4 clipSpacePos(lastX, lastY, 2.f * depth - 1.f, 1.f);
-			glm::vec4 viewSpacePos = inverseProjection * clipSpacePos;
-			viewSpacePos /= viewSpacePos.w;
-			worldSpacePos = inverseView * viewSpacePos;
-			worldSpacePos /= worldSpacePos.w;
-			//SchoolMap::getInstance().ProcessInput(worldSpacePos.x, worldSpacePos.y);
-		}
+		
 	}
 }
 
